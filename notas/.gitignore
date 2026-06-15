@@ -1,0 +1,57 @@
+# Miscellaneous
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# IntelliJ related
+*.iml
+*.ipr
+out/
+generated/
+
+# The .vscode folder contains launch configuration and tasks you configure in VS Code
+# that you may wish to be included in version control, so .gitignore is commented out by default
+#.vscode/
+
+# Flutter/Dart/Pub related
+**/flutter/**
+**/ios/**
+**/linux/**
+**/macos/**
+**/windows/**
+**/web/**
+**/android/**
+**/build/**
+**/dart_tool/**
+**/flutter_plugins\.json
+**/package-lock\.json
+**/pubspec.lock
+**/.packages/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.symlinks/
+**/analysis_options.yaml
+.pub-cache/
+.pub/
+coverage/
+lib/generated/
+test/.test_coverage
+test/coverage_reporter/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Android Studio will place build artifacts here
+android/app/debug/
+android/app/profile/
+android/app/release/

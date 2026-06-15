@@ -1,0 +1,20 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Ignore build and pub-cache directories inside the Flutter project
+notas/build/
+notas/.dart_tool/
+notas/.pub-cache/
+notas/android/
+notas/ios/
+notas/linux/
+notas/macos/
+notas/windows/
+notas/web/
