@@ -159,7 +159,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _deleteNote(Note note) async {
+  Future<bool?> _deleteNote(Note note) async {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -199,7 +199,9 @@ class _HomePageState extends State<HomePage> {
               .toList();
         }
       });
+      return true;
     }
+    return false;
   }
 
   Future<void> _navigateToNote(Note note) async {
@@ -491,6 +493,9 @@ class _HomePageState extends State<HomePage> {
                         return Dismissible(
                           key: Key('note_${note.id ?? index}'),
                           direction: DismissDirection.endToStart,
+                          confirmDismiss: (direction) async {
+                            return await _deleteNote(note);
+                          },
                           background: Container(
                             alignment: Alignment.centerRight,
                             padding: const EdgeInsets.only(right: 20),
@@ -504,7 +509,6 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.white,
                             ),
                           ),
-                          onDismissed: (_) => _deleteNote(note),
                           child: Card(
                             margin: const EdgeInsets.only(bottom: 12),
                             child: InkWell(
@@ -601,31 +605,39 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const NoteEditorPage()),
-          );
-          final notes = await StorageService.getNotes();
-          setState(() {
-            _notes = notes;
-            if (_searchQuery.isNotEmpty) {
-              _filteredNotes = notes
-                  .where(
-                    (note) =>
-                        note.title.toLowerCase().contains(
-                          _searchQuery.toLowerCase(),
-                        ) ||
-                        note.content.toLowerCase().contains(
-                          _searchQuery.toLowerCase(),
-                        ),
-                  )
-                  .toList();
-            }
-          });
-        },
-        child: const Icon(CupertinoIcons.plus),
+      floatingActionButton: SafeArea(
+        child: FloatingActionButton(
+          onPressed: () async {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const NoteEditorPage()),
+            );
+            final notes = await StorageService.getNotes();
+            setState(() {
+              _notes = notes;
+              if (_searchQuery.isNotEmpty) {
+                _filteredNotes = notes
+                    .where(
+                      (note) =>
+                          note.title.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          ) ||
+                          note.content.toLowerCase().contains(
+                            _searchQuery.toLowerCase(),
+                          ),
+                    )
+                    .toList();
+              }
+            });
+          },
+          child: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(CupertinoIcons.plus, size: 20),
+              Text('Nueva', style: TextStyle(fontSize: 10)),
+            ],
+          ),
+        ),
       ),
     );
   }
