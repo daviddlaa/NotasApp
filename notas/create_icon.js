@@ -17,41 +17,58 @@ function createIcon(path, size, isBackground) {
         png.data[idx+2] = 240;
         png.data[idx+3] = 255;
       } else {
-        // Diseño moderno: "N" estilizada en amarillo dorado
+        // Diseño de Cuaderno/Journal
         var relX = x / size;
         var relY = y / size;
         
-        // Fondo transparente
         var inIcon = false;
         
-        // Barra vertical izquierda de la N
-        if (relX >= 0.22 && relX <= 0.32 && relY >= 0.18 && relY <= 0.82) {
+        // Color del cuaderno: azul/morado oscuro
+        var r = 106, g = 90, b = 205; // SlateBlue
+        
+        // Marco del cuaderno (rectángulo principal)
+        if (relX >= 0.20 && relX <= 0.80 && relY >= 0.12 && relY <= 0.88) {
           inIcon = true;
         }
         
-        // Barra diagonal de la N
-        var diagDist = Math.abs((relY - 0.18) - 2.5 * (relX - 0.22));
-        if (relX >= 0.30 && relX <= 0.50 && relY >= 0.18 && relY <= 0.82 && diagDist < 0.08) {
+        // Binding/spiral en el lado izquierdo (líneas verticales)
+        if (relX >= 0.20 && relX <= 0.26 && relY >= 0.15 && relY <= 0.85) {
           inIcon = true;
+          // Color más oscuro para el binding
+          r = 75; g = 0; b = 130;
         }
         
-        // Barra vertical derecha de la N
-        if (relX >= 0.68 && relX <= 0.78 && relY >= 0.18 && relY <= 0.82) {
-          inIcon = true;
+        // Espiral (círculos pequeños)
+        var spiralY = [0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80];
+        for (var i = 0; i < spiralY.length; i++) {
+          var sy = spiralY[i];
+          var dist = Math.sqrt(Math.pow(relX - 0.23, 2) + Math.pow(relY - sy, 2));
+          if (dist < 0.035) {
+            inIcon = true;
+            r = 200; g = 200; b = 200; // Gris plata para espiral
+          }
         }
         
-        // Líneas horizontales simulando texto (debajo de la N)
-        if (relY >= 0.55 && relY <= 0.60 && relX >= 0.35 && relX <= 0.65) {
-          inIcon = true;
+        // Líneas horizontales de contenido (líneas de papel)
+        var linePositions = [0.30, 0.40, 0.50, 0.60, 0.70, 0.80];
+        for (var i = 0; i < linePositions.length; i++) {
+          var ly = linePositions[i];
+          if (relX >= 0.32 && relX <= 0.74 && relY >= ly - 0.015 && relY <= ly + 0.015) {
+            inIcon = true;
+            r = 200; g = 200; b = 220; // Gris claro para líneas
+          }
         }
-        if (relY >= 0.65 && relY <= 0.70 && relX >= 0.35 && relX <= 0.55) {
+        
+        // Título del cuaderno (rectángulo rojo en superior)
+        if (relX >= 0.35 && relX <= 0.65 && relY >= 0.18 && relY <= 0.24) {
           inIcon = true;
+          r = 220; g = 60; b = 60; // Rojo oscuro
         }
         
         if (inIcon) {
-          png.data[idx] = 255;
-          png.data[idx+1] = 193;
-          png.data[idx+2] = 7;
+          png.data[idx] = r;
+          png.data[idx+1] = g;
+          png.data[idx+2] = b;
           png.data[idx+3] = 255;
         } else {
           png.data[idx] = 0;
@@ -67,7 +84,7 @@ function createIcon(path, size, isBackground) {
   console.log('Created ' + path);
 }
 
-// Create foreground icon (the N design)
+// Create foreground icon (cuaderno)
 createIcon('c:/Users/david/Desktop/notas/notas/notas/assets/icon_foreground.png', 512, false);
 
 // Create background for adaptive icon
