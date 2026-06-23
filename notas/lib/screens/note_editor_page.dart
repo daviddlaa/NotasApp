@@ -28,7 +28,7 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
   String? _createdAt;
   String? _updatedAt;
 
-  bool get isEditing => widget.note != null;
+  bool get isEditing => widget.note != null && widget.note!.id != null;
 
   @override
   void initState() {
@@ -82,29 +82,33 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
     Note savedNote;
 
     if (isEditing) {
-      savedNote = Note(
-        id: widget.note!.id,
+      // Usar copyWith para preservar userId, firestoreId y syncStatus
+      savedNote = widget.note!.copyWith(
         title: title.isEmpty ? widget.note!.title : title,
         content: content,
-        createdAt: widget.note!.createdAt,
         updatedAt: now,
       );
       await StorageService.updateNote(savedNote);
     } else {
-      savedNote = Note(
+      final newNote = Note(
         title: title.isEmpty ? 'SIN TÍTULO' : title,
         content: content,
         createdAt: now,
       );
-      await StorageService.addNote(savedNote);
+      savedNote = await StorageService.addNote(newNote);
     }
 
     if (mounted) {
-      // Navegar al visor de la nota guardada
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => NoteReaderPage(note: savedNote)),
-      );
+      if (isEditing) {
+        // Editando existente: volver al visor con cambios
+        Navigator.pop(context, savedNote);
+      } else {
+        // Nueva nota: ir al visor de la nota
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => NoteReaderPage(note: savedNote)),
+        );
+      }
     }
   }
 
@@ -297,11 +301,23 @@ class _NoteEditorPageState extends State<NoteEditorPage> {
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Icon(CupertinoIcons.floppy_disk),
-                      label: Text(_isSaving ? 'Guardando...' : 'Guardar'),
+                          : Icon(
+                              _isSaving
+                                  ? CupertinoIcons.floppy_disk
+                                  : CupertinoIcons.checkmark_circle,
+                            ),
+                      label: Text(
+                        _isSaving
+                            ? 'Guardando...'
+                            : 'Guardar', // Guardado instantáneo ahora
+                      ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: colorScheme.primary,
-                        foregroundColor: colorScheme.onPrimary,
+                        backgroundColor: _isSaving
+                            ? colorScheme.primary
+                            : Colors.green.shade600,
+                        foregroundColor: _isSaving
+                            ? colorScheme.onPrimary
+                            : Colors.white,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                     ),

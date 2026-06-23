@@ -1,42 +1,22 @@
-# TODO - Mejoras de Diseño Visual
+# TODO: Fix "Guardando..." animation issue when offline
 
-## Selección del usuario:
-- 1A: Cupertino Icons (estilo iOS elegante)
-- 2B: Borde izquierdo de color según tema
-- 3B: FAB circular clásico estilizado
-- 4B: Swipe para eliminar
-- 5B: AppBar sin gradiente, más limpio
+## Problem
+When offline, the app waits for Firebase response, keeping the "Guardando..." animation visible.
 
----
+## Solution
+Save to SQLite first (instant), then upload to Firebase in background without waiting.
 
-## Estado: COMPLETADO ✓
+## Completed Steps
 
-### Cambios realizados:
+### Step 1: Modified `storage_service.dart`
+- [x] Save to SQLite first (instant)
+- [x] Upload to Firebase in background without await
+- [x] Created `_syncNoteToCloudBackground()` method
+- [x] Also modified `updateNote()` to use background sync
 
-## Paso 1: Iconos Cupertino
-- [x] Import `package:flutter/cupertino.dart` en todos los archivos
-- [x] Actualizar iconos en home_page.dart (gear, plus, clock, trash, search)
-- [x] Actualizar iconos en note_editor_page.dart (doc_on_clipboard, floppy_disk)
-- [x] Actualizar iconos en note_reader_page.dart (trash, textformat_size, doc_on_doc, share, pencil)
+### Step 2: Modified `note_editor_page.dart`
+- [x] Changed button to green "Guardar" (instant save)
+- [x] Added checkmark icon for better visual feedback
 
-## Paso 2: Borde izquierdo de color en tarjetas
-- [x] Modificar Card en home_page.dart para añadir Container con borde izquierdo de color (4px)
-- [x] Usar colorScheme.primary para el borde
-
-## Paso 3: FAB estilizado
-- [x] Cambiar FloatingActionButton.extended a FloatingActionButton circular
-- [x] Usar CupertinoIcons.plus
-
-## Paso 4: Swipe actions
-- [x] Agregar widget Dismissible para swipe eliminar
-- [x] Animación con background de color rojo y icono de trash
-
-## Paso 5: AppBar más limpio
-- [x] Remover gradient del flexibleSpace
-- [x] Usar elevation: 0
-- [x] Estilo más minimal
-
-## Archivos actualizados:
-- notas/lib/screens/home_page.dart
-- notas/lib/screens/note_editor_page.dart
-- notas/lib/screens/note_reader_page.dart
+### Step 3: Added automatic sync on app open
+- [x] Sync pending notes when opening the app (_syncPendingNotes in home_page.dart)

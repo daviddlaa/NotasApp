@@ -1,0 +1,22 @@
+[debug] [2026-06-22T00:16:43.447Z] ----------------------------------------------------------------------
+[debug] [2026-06-22T00:16:43.453Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\david\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js projects:create notas-app
+[debug] [2026-06-22T00:16:43.454Z] CLI Version:   14.22.0
+[debug] [2026-06-22T00:16:43.454Z] Platform:      win32
+[debug] [2026-06-22T00:16:43.455Z] Node Version:  v20.20.1
+[debug] [2026-06-22T00:16:43.455Z] Time:          Sun Jun 21 2026 19:16:43 GMT-0500 (hora de Ecuador)
+[debug] [2026-06-22T00:16:43.455Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-22T00:16:43.472Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-22T00:16:43.473Z] > authorizing via signed-in user (peladorag3@gmail.com)
+[debug] [2026-06-22T00:23:52.923Z] Checked if tokens are valid: true, expires at: 1782090917951
+[debug] [2026-06-22T00:23:52.943Z] Checked if tokens are valid: true, expires at: 1782090917951
+[debug] [2026-06-22T00:23:52.958Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-06-22T00:23:52.959Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"notas-app","name":"notas-app"}
+[debug] [2026-06-22T00:23:53.935Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 409
+[debug] [2026-06-22T00:23:53.935Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"error":{"code":409,"message":"Requested entity already exists","status":"ALREADY_EXISTS"}}
+[debug] [2026-06-22T00:23:54.039Z] FirebaseError: Request to https://cloudresourcemanager.googleapis.com/v1/projects had HTTP Error: 409, Requested entity already exists
+    at responseToError (C:\Users\david\AppData\Roaming\npm\node_modules\firebase-tools\lib\responseToError.js:53:12)
+    at RetryOperation._fn (C:\Users\david\AppData\Roaming\npm\node_modules\firebase-tools\lib\apiv2.js:312:77)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+[error] 
+[error] Error: Failed to create project because there is already a project with ID notas-app. Please try again with a unique project ID.

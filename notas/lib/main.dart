@@ -1,29 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 import 'database/database_helper.dart';
-import 'screens/home_page.dart';
+import 'screens/login_page.dart';
 import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Inicializar Firebase
+  await Firebase.initializeApp();
+
   await DatabaseHelper.instance.database;
 
   // Cargar preferencias guardadas
   final prefs = await SharedPreferences.getInstance();
   final colorIndex =
       prefs.getInt('colorIndex') ?? AppTheme.getDefaultColorIndex();
-
-  // Obtener texto compartido si existe
-  String? sharedText;
-  try {
-    final channel = MethodChannel('com.example.notas/share');
-    sharedText = await channel.invokeMethod<String>('getSharedText');
-  } catch (e) {
-    // Si no hay texto compartido, continuar normal
-    sharedText = null;
-  }
 
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
@@ -32,14 +27,13 @@ void main() async {
     ),
   );
 
-  runApp(NotesApp(initialColorIndex: colorIndex, sharedText: sharedText));
+  runApp(NotesApp(initialColorIndex: colorIndex));
 }
 
 class NotesApp extends StatefulWidget {
   final int initialColorIndex;
-  final String? sharedText;
 
-  const NotesApp({super.key, required this.initialColorIndex, this.sharedText});
+  const NotesApp({super.key, required this.initialColorIndex});
 
   @override
   State<NotesApp> createState() => _NotesAppState();
@@ -47,20 +41,17 @@ class NotesApp extends StatefulWidget {
 
 class _NotesAppState extends State<NotesApp> {
   late int _currentColorIndex;
-  String? _sharedText;
 
   @override
   void initState() {
     super.initState();
     _currentColorIndex = widget.initialColorIndex;
-    _sharedText = widget.sharedText;
   }
 
   Future<void> _changeColor(int index) async {
     setState(() {
       _currentColorIndex = index;
     });
-    // Guardar preferencia
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('colorIndex', index);
   }
@@ -73,13 +64,9 @@ class _NotesAppState extends State<NotesApp> {
       title: 'Notas',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.getTheme(currentColor),
-      home: HomePage(
+      home: LoginPage(
         currentColorIndex: _currentColorIndex,
         onColorChanged: _changeColor,
-        sharedText: _sharedText,
-        onSharedTextHandled: () {
-          _sharedText = null;
-        },
       ),
     );
   }

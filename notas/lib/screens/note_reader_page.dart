@@ -11,6 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import '../models/note.dart';
 import '../services/storage_service.dart';
 import 'note_editor_page.dart';
+import 'note_player_page.dart';
 
 class NoteReaderPage extends StatefulWidget {
   final Note note;
@@ -141,6 +142,7 @@ class _NoteReaderPageState extends State<NoteReaderPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final isTextTooLong = _note.content.length > 500;
 
     return PopScope(
       canPop: false,
@@ -156,6 +158,26 @@ class _NoteReaderPageState extends State<NoteReaderPage> {
           centerTitle: true,
           elevation: 0,
           actions: [
+            // Botón del player - desactivado si el texto es muy largo
+            IconButton(
+              icon: Icon(
+                CupertinoIcons.play_circle,
+                color: isTextTooLong ? Colors.grey.shade400 : null,
+              ),
+              onPressed: isTextTooLong
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => NotePlayerPage(note: _note),
+                        ),
+                      );
+                    },
+              tooltip: isTextTooLong
+                  ? 'Texto muy largo para reproducir (máx 500 caracteres)'
+                  : 'Reproducir texto',
+            ),
             IconButton(
               icon: const Icon(CupertinoIcons.trash),
               onPressed: _deleteNote,
@@ -291,7 +313,16 @@ class _NoteReaderPageState extends State<NoteReaderPage> {
                               builder: (_) => NoteEditorPage(note: _note),
                             ),
                           );
-                          if (result != null) {
+                          // Actualizar inmediatamente con el resultado
+                          // Además, recargar la nota desde la base de datos para asegurar que tenga el ID correcto
+                          if (result != null && result.id != null) {
+                            final allNotes = await StorageService.getNotes();
+                            final refreshedNote = allNotes.firstWhere(
+                              (n) => n.id == result.id,
+                              orElse: () => result,
+                            );
+                            setState(() => _note = refreshedNote);
+                          } else if (result != null) {
                             setState(() => _note = result);
                           }
                         },
